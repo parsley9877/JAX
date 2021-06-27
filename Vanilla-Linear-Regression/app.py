@@ -185,11 +185,13 @@ def main(argv):
     param_history = []
     param_history.append(params)
 
+    # training loop
     for _ in trange(0, epochs):
 
         params = train_one_epoch(batched_predict, params, (x_train, y_train), loss_fn, learing_rate)
         param_history.append(np.asarray(params))
 
+    # writing results and plotting model
     log_file_object = open("log.txt","w")
 
     for item in param_history:
