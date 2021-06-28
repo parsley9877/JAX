@@ -3,30 +3,6 @@ import jax.numpy as jnp
 import numpy as np
 
 
-# function for generating training data
-def func(input):
-    """
-    Description:
-
-    This is the real model, and we use it to
-    generate training data.
-
-    input -- an scalar
-    """
-    return 3*input + 10
-
-# function for generating training data (vectorized version)
-def batched_func(batched_input):
-    """
-    Description:
-
-    This is the real model, and we use it to
-    generate training data (Vectorized version)
-
-    batched_input -- a batch of scalars
-    """
-    return jax.vmap(func, in_axes=(0))(batched_input)
-
 # model to be trained with params as trainable values
 def predict(params, input):
     """

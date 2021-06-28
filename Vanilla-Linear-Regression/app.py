@@ -84,7 +84,7 @@ def main(argv):
     # Generating training data
     x_train = np.linspace(-10, 10, num_data).reshape(num_data, 1)
     noise = np.random.normal(loc, std, size=(num_data, 1))
-    y_train = training_utils.batched_func(x_train) + noise
+    y_train = batched_func(x_train) + noise
 
     # initializing params
     params = [w0, b0]
