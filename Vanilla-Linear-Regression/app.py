@@ -29,6 +29,7 @@ flags.DEFINE_float('init_w', 2.2, help='initial weight coeff')
 flags.DEFINE_float('init_b', 3.7, help='initial bias')
 flags.DEFINE_integer('num_train_data', 100, help='number of training data points')
 flags.DEFINE_integer('epochs', 60, help='number of epochs')
+flags.DEFINE_bool('use_jit', False, help='Use just in time compilation or not')
 
 # flag validators
 def lr_checker(number):
@@ -58,6 +59,7 @@ def main(argv):
     b0 = flags.FLAGS.init_b
     num_data = flags.FLAGS.num_train_data
     epochs = flags.FLAGS.epochs
+    use_jit = flags.FLAGS.use_jit
 
     # function for generating training data
     def func(input):
@@ -94,11 +96,16 @@ def main(argv):
     param_history = []
     param_history.append(params)
 
+    if use_jit:
+        train_one_epoch_func = jax.jit(training_utils.train_one_epoch, static_argnums=(0, 3))
+    else:
+        train_one_epoch_func = training_utils.train_one_epoch
+
     # training loop
     t_start = time.time()
     for _ in trange(0, epochs):
 
-        params = training_utils.train_one_epoch(training_utils.batched_predict, params,
+        params = train_one_epoch_func(training_utils.batched_predict, params,
          (x_train, y_train), training_utils.loss_fn, learing_rate)
         param_history.append(np.asarray(params))
     t_end = time.time()
