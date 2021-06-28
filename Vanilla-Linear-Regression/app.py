@@ -10,6 +10,8 @@ from tqdm import trange
 
 import matplotlib.pyplot as plt
 
+import time
+
 import training_utils
 
 """
@@ -93,17 +95,22 @@ def main(argv):
     param_history.append(params)
 
     # training loop
+    t_start = time.time()
     for _ in trange(0, epochs):
 
         params = training_utils.train_one_epoch(training_utils.batched_predict, params,
          (x_train, y_train), training_utils.loss_fn, learing_rate)
         param_history.append(np.asarray(params))
+    t_end = time.time()
+
+    elapsed_time = t_end - t_start
 
     # writing results and plotting model
     log_file_object = open("log.txt","w")
 
     for item in param_history:
         log_file_object.write('w = ' + str(item[0]) + ', b = ' + str(item[1]) + '\n')
+    log_file_object.write('training time (seconds): ' + str(elapsed_time))
 
     log_file_object.close()
 
@@ -117,10 +124,8 @@ def main(argv):
     ax.set_facecolor('lightgray')
 
     fig.savefig('trained_model.png')
+    print('training time (seconds): ' + str(elapsed_time))
 
-
-
-    # return param_history
 
 # Entry point of exec
 if __name__ == '__main__':
