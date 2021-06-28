@@ -15,7 +15,7 @@ import training_utils
 """
 Simple app for implementing a vanilla linear regression model with JAX.
 
-Config your flags in vanilla_linear_reg.txt.
+Config your flags in flags.cfg.
 """
 
 flags.DEFINE_float('lr', 0.01, help='learning rate')
