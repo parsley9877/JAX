@@ -43,7 +43,13 @@ def main(argv):
             jit_func(stateful_class.state.mat)
         else:
             initial_state = jit_func(initial_state, mat)
+    log_file_object = open("log.txt","w")
 
+    log_file_object.writelines(['This is the final state:\n\n mat:\n'])
+    np.savetxt(log_file_object, np.asarray(jax.tree_util.tree_leaves(initial_state)[0]))
+    log_file_object.write('\ncount:\n' + str(initial_state.num))
+
+    log_file_object.close()
     print(jax.tree_util.tree_leaves(initial_state))
 
     
