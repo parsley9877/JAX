@@ -15,3 +15,6 @@ bazel-bin/app --flagfile=flags.cfg
 
 ## Sample Generated Output
 ![alt text](https://github.com/parsley9877/jax-tutorial/blob/main/Stateful-Programming-JAX/output_sample.png?raw=true)
+
+## Importan Point
+if we are to use `jax.jit()` on a function, the arguments of the function must be registered as `pytree`
