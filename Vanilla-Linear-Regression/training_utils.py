@@ -1,7 +1,29 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
+from typing import Tuple, Iterable
 
+
+class Params():
+    """
+    Contaoner for model params
+    """
+    def __init__(self, w: float, b: float):
+        self.w = w
+        self.b = b
+
+def flatten_MyContainer(container: Params) -> Tuple[Iterable[int], str]:
+    """Returns an iterable over container contents, and aux data.
+    We use this func to register our param container as pytree node
+    """
+    flat_contents = [container.w, container.b]
+    return flat_contents, ''
+
+def unflatten_MyContainer(aux: str, flat_contents: Iterable[int]) -> Params:
+    """Converts aux data and the flat contents into a MyContainer.
+    We use this func to register our param container as pytree node
+    """
+    return Params(*flat_contents)
 
 # model to be trained with params as trainable values
 def predict(params, input):
@@ -15,7 +37,7 @@ def predict(params, input):
     input -- an scalar
     params -- a pytree data structure consists of parameters to be trained
     """
-    w, b = params
+    w, b = params.w, params.b
     return w*input + b
 
 # model to be trained with params as trainable values (vectorized version)
@@ -62,7 +84,7 @@ def update(params, grads, lr):
     grads -- grads of params (it is a pytree with exactly the same structure of params)
     lr -- learning rate
     """
-    return params - lr * grads
+    return jax.tree_multimap(lambda p, g: p - lr * g, params, grads)
 
 
 def train_one_epoch(model, params, data, loss_fn, lr):

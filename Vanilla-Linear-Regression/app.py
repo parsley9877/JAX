@@ -60,7 +60,6 @@ def main(argv):
     num_data = flags.FLAGS.num_train_data
     epochs = flags.FLAGS.epochs
     use_jit = flags.FLAGS.use_jit
-
     # function for generating training data
     def func(input):
         """
@@ -91,8 +90,8 @@ def main(argv):
     y_train = batched_func(x_train) + noise
 
     # initializing params
-    params = [w0, b0]
-    params = jnp.array(params)
+
+    params = training_utils.Params(w0, b0)
     param_history = []
     param_history.append(params)
 
@@ -101,13 +100,19 @@ def main(argv):
     else:
         train_one_epoch_func = training_utils.train_one_epoch
 
+    # #registering out param container as pytree
+    jax.tree_util.register_pytree_node(training_utils.Params,
+     training_utils.flatten_MyContainer, training_utils.unflatten_MyContainer)
+
+
+
     # training loop
     t_start = time.time()
     for _ in trange(0, epochs):
 
         params = train_one_epoch_func(training_utils.batched_predict, params,
          (x_train, y_train), training_utils.loss_fn, learing_rate)
-        param_history.append(np.asarray(params))
+        param_history.append(params)
     t_end = time.time()
 
     elapsed_time = t_end - t_start
@@ -116,7 +121,7 @@ def main(argv):
     log_file_object = open("log.txt","w")
 
     for item in param_history:
-        log_file_object.write('w = ' + str(item[0]) + ', b = ' + str(item[1]) + '\n')
+        log_file_object.write('w = ' + str(item.w) + ', b = ' + str(item.b) + '\n')
     log_file_object.write('training time (seconds): ' + str(elapsed_time))
 
     log_file_object.close()
